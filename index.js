@@ -16,21 +16,20 @@ function postToPoshmark() {
   }
 
   const idToSend = idsToShare.pop();
-	$.ajax({
-		type: 'PUT',
-		url: `https://poshmark.com/vm-rest/users/self/shared_posts/${idToSend.id}`,
-		success(response) {
+  $.ajax({
+    type: 'PUT',
+    url: `https://poshmark.com/vm-rest/users/self/shared_posts/${idToSend.id}`,
+    success(response) {
       console.log(response, idsToShare.length, idToSend.name);
       localStorage.count = Number(localStorage.count) + 1; 
       if (response.error) {
         haltPosting = true;
         console.log('ERROR', response.error.errorType);
         // If errorType is suspected bot then show a waiting message and prompt user to fill out captcha
-
       }
-			postToPoshmark(idsToShare);
-		}
-	});
+      postToPoshmark(idsToShare);
+    }
+  });
 }
 
 
