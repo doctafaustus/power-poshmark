@@ -26,6 +26,7 @@ function postToPoshmark() {
         haltPosting = true;
         console.log('ERROR', response.error.errorType);
         // If errorType is suspected bot then show a waiting message and prompt user to fill out captcha
+        // Or try throttling posts
       }
       postToPoshmark(idsToShare);
     }
