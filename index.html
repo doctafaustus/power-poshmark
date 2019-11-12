@@ -11,7 +11,6 @@
       body {
         width: 400px;
         background-color: #fff;
-        text-align: center;
         font-family: 'Heebo', sans-serif;
       }
       #top-bar {
@@ -24,7 +23,8 @@
       }
       #logo {
         display: flex;
-        text-decoration: none;;
+        text-decoration: none;
+        text-align: center;
       }
       #logo-text {
         font-family: 'Merriweather', serif;
@@ -50,6 +50,8 @@
         color: #605f67;
         letter-spacing: 0.5px;
         font-size: 20px;
+        display: block;
+        text-align: center;
       }
 
       .tool-tip-icon {
@@ -63,6 +65,14 @@
         background-position: center center;
       }
 
+      .title-group {
+        text-align: left;
+        display: grid;
+      }
+
+      .title-group.auto-sharer {
+        grid-template-columns: 130px auto;
+      }
 
       .extension-activity-log {
         font-size: 14px;
@@ -89,9 +99,16 @@
 
     <div id="wrapper">
       <label>Auto Sharer</label>
-      <h2>Share My Closest</h2>
-      <div class="tool-tip-icon"></div>
-      <div class="tool-tip">This action will automatically share items in your feed one at a time.</div>
+
+      <div class="title-group auto-sharer">
+        <h2>Share My Closest</h2>
+        <div class="tool-tip-group">
+          <div class="tool-tip-icon"></div>
+          <div class="tool-tip">This action will automatically share items in your feed one at a time.</div>
+        </div>
+      </div>
+
+
       <button id="#start-sharer">Begin</button>
       <button id="#stop-shrarer">Stop</button>
     </div>
