@@ -10,52 +10,116 @@
   </head>
 	<body>
     <div id="top-bar">
-      <a id="logo" href="#" target="_blank">
-        <img src="./icon48.png">
-        <div id="logo-text">Power Poshmark</div>
-      </a>
+      <div id="top-bar-text">Power Poshmark</div>
     </div>
 
     <div id="wrapper">
-      <section class="function">
+      <section class="function auto-sharer">
         <div class="function-heading">
           <label>Auto Sharer</label>
           <img class="label-img" src="./share-icon.png">    
         </div>
 
         <div class="function-groups">
-          <div class="function-group auto-sharer">
+          <div class="function-group">
             <div class="tool-tip-group">
               <h2>Share My Closet</h2>
               <div class="tool-tip-icon"></div>
               <div class="tool-tip">Automatically share items in your closet.</div>
             </div>
             <div class="buttons-group">
-              <button id="#start-my-sharer" class="start">Start</button>
-              <button id="#stop-my-shrarer" class="stop">Stop</button>
+              <button id="start-my-sharer" class="start">Start</button>
+              <button id="stop-my-shrarer" class="stop">Stop</button>
             </div>
           </div>
 
-          <div class="function-group auto-sharer">
+          <div class="function-group">
             <div class="tool-tip-group">
               <h2>Share Other's Items</h2>
               <div class="tool-tip-icon"></div>
               <div class="tool-tip">Automatically share other's items on category pages.</div>
             </div>
             <div class="buttons-group">
-              <button id="#start-my-sharer" class="start">Start</button>
-              <button id="#stop-my-shrarer" class="stop">Stop</button>
+              <button id="start-other-sharer" class="start">Start</button>
+              <button id="stop-other-shrarer" class="stop">Stop</button>
             </div>
           </div>
         </div>
       </section>
 
+      <hr>
+
+      <section class="function auto-follower">
+        <div class="function-heading">
+          <label>Auto Follower</label>
+          <img class="label-img" src="./followers-icon.png">    
+        </div>
+
+        <div class="function-groups">
+          <div class="function-group">
+            <div class="tool-tip-group">
+              <h2>Follow Users</h2>
+              <div class="tool-tip-icon"></div>
+              <div class="tool-tip">Automatically follow all users on a page.</div>
+            </div>
+            <div class="buttons-group">
+              <button id="#start-following" class="start">Start</button>
+              <button id="#stop-following" class="stop">Stop</button>
+            </div>
+          </div>
+
+          <div class="function-group">
+            <div class="tool-tip-group">
+              <h2>Unfollow Users</h2>
+              <div class="tool-tip-icon"></div>
+              <div class="tool-tip">Automatically unfollow all users on a page so you can reappear in their notifications.</div>
+            </div>
+            <div class="buttons-group">
+              <button id="start-unfollowing" class="start">Start</button>
+              <button id="stop-unfollowing" class="stop">Stop</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr>
+
+      <section class="function bundle-creator">
+        <div class="function-heading">
+          <label>Bundle Creator</label>
+          <img class="label-img" src="./bundle-icon.png">    
+        </div>
+
+        <div class="function-groups">
+          <div class="function-group">
+            <div class="tool-tip-group">
+              <h2>Scan Bundle Opportunites</h2>
+              <div class="tool-tip-icon"></div>
+              <div class="tool-tip">Scan news feed for users who liked multiple items from your closet.</div>
+            </div>
+            <div class="buttons-group">
+              <button id="start-following" class="start">Start</button>
+              <button id="stop-following" class="stop">Stop</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <hr>
     </div>
 
     <label class="extension-activity-log">Extension Activity Log</label>
     <section class="log">
-      log stuff
-      afasf fs
+      <span class="msg">This is a message.</span>
+      <span class="msg">This is another message.</span>
+      <span class="msg">This is a message.</span>
+      <span class="msg">This is another message.</span>
+      <span class="msg">This is a message.</span>
+      <span class="msg">This is another message.</span>
+      <span class="msg">This is a message.</span>
+      <span class="msg">This is a message.</span>
+      <span class="msg">This is another message.</span>
+      <span class="msg">This is a message.</span>
+      <span class="msg">This is another message.</span>
     </section>
     <script src="popup.js"></script>
   </body>

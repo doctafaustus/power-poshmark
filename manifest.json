@@ -24,9 +24,11 @@
 
  "content_scripts": [
     {
-      "matches": ["*://*.poshmark.com/*"],
+      "matches": ["http://example.com/", "https://poshmark.com/*"],
       "js": ["content.js"]
     }
-  ]
+  ],
+
+  "web_accessible_resources": ["scripts/message.js", "scripts/sharer.js", "scripts/init.js"]
 
 }
