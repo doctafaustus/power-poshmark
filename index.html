@@ -25,11 +25,11 @@
             <div class="tool-tip-group">
               <h2>Share My Closet</h2>
               <div class="tool-tip-icon"></div>
-              <div class="tool-tip">Automatically share items in your closet.</div>
+              <div class="tool-tip">Automatically share items in your closet.<br>You may filter the items on the site before beginning.</div>
             </div>
             <div class="buttons-group">
               <button id="start-my-sharer" class="start">Start</button>
-              <button id="stop-my-shrarer" class="stop">Stop</button>
+              <button id="stop-my-sharer" class="stop" disabled>Stop</button>
             </div>
           </div>
 
@@ -37,11 +37,11 @@
             <div class="tool-tip-group">
               <h2>Share Other's Items</h2>
               <div class="tool-tip-icon"></div>
-              <div class="tool-tip">Automatically share other's items on category pages.</div>
+              <div class="tool-tip">Automatically share other's items on category pages.<br>You may filter the items on the site before beginning.</div>
             </div>
             <div class="buttons-group">
               <button id="start-other-sharer" class="start">Start</button>
-              <button id="stop-other-shrarer" class="stop">Stop</button>
+              <button id="stop-other-sharer" class="stop" disabled>Stop</button>
             </div>
           </div>
         </div>
@@ -63,8 +63,8 @@
               <div class="tool-tip">Automatically follow all users on a page.</div>
             </div>
             <div class="buttons-group">
-              <button id="#start-following" class="start">Start</button>
-              <button id="#stop-following" class="stop">Stop</button>
+              <button id="start-following" data-action="follow" class="start">Start</button>
+              <button id="stop-following" data-action="follow" class="stop" disabled>Stop</button>
             </div>
           </div>
 
@@ -75,8 +75,8 @@
               <div class="tool-tip">Automatically unfollow all users on a page so you can reappear in their notifications.</div>
             </div>
             <div class="buttons-group">
-              <button id="start-unfollowing" class="start">Start</button>
-              <button id="stop-unfollowing" class="stop">Stop</button>
+              <button id="start-unfollowing" data-action="unfollow" class="start">Start</button>
+              <button id="stop-unfollowing" data-action="unfollow" class="stop" disabled>Stop</button>
             </div>
           </div>
         </div>
@@ -98,8 +98,8 @@
               <div class="tool-tip">Scan news feed for users who liked multiple items from your closet.</div>
             </div>
             <div class="buttons-group">
-              <button id="start-following" class="start">Start</button>
-              <button id="stop-following" class="stop">Stop</button>
+              <button id="start-bundle" class="start">Start</button>
+              <button id="stop-bundle" class="stop" disabled>Stop</button>
             </div>
           </div>
         </div>
@@ -107,20 +107,14 @@
       <hr>
     </div>
 
-    <label class="extension-activity-log">Extension Activity Log</label>
-    <section class="log">
-      <span class="msg">This is a message.</span>
-      <span class="msg">This is another message.</span>
-      <span class="msg">This is a message.</span>
-      <span class="msg">This is another message.</span>
-      <span class="msg">This is a message.</span>
-      <span class="msg">This is another message.</span>
-      <span class="msg">This is a message.</span>
-      <span class="msg">This is a message.</span>
-      <span class="msg">This is another message.</span>
-      <span class="msg">This is a message.</span>
-      <span class="msg">This is another message.</span>
+    <section class="log-container">
+      <div class="log-label-group">
+        <label class="extension-activity-log">Extension Activity Log</label>
+        <svg id="caret" viewBox="0 0 64 36.26" fill="#bababd"><g><path d="M35,35,62.75,7.31a4.28,4.28,0,1,0-6-6.06L32,26,7.29,1.25a4.28,4.28,0,0,0-6,6.06L29,35a4.4,4.4,0,0,0,3,1.25A4.26,4.26,0,0,0,35,35Zm0,0"></path></g></svg>
+      </div>
+      <div class="log"></div>
     </section>
+
     <script src="popup.js"></script>
   </body>
 </html>
