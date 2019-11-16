@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Power Poshmark",
-  "description": "This extension automates an number of Poshmark actions for poshmark sellers such as sharing closets, sharing other's items, following and unfollowing users, and scanning your newsfeed for bundle opportunities.",
+  "description": "This extension automates an number of Poshmark actions for Poshmark sellers.",
   "version": "0.0.0.3",
 
   "icons": { 
