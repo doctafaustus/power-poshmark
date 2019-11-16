@@ -74,8 +74,10 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
         console.log(tabUrl);
         // Check if on relevant URL
         if (!/\/search\?(.*)type=people/.test(tabUrl) && !/\/user\/\w+\/follow/.test(tabUrl)) {
+          const followersLink = (username) ? `user/${username}/followers` : 'login';
+          const followingLink = (username) ? `user/${username}/following` : 'login';
           return addLog(`
-            <span class="msg error">Not on right page. Go to your either your <a target="_blank" href="https://poshmark.com/user/${username}/followers">followers page</a>, <a target="_blank" href="https://poshmark.com/user/${username}/following">following page</a>, or a people search page first such as this <a target="_bank" href="https://poshmark.com/search?query=a&type=people">one</a>.</span>
+            <span class="msg error">Not on right page. Go to your either your <a target="_blank" href="https://poshmark.com/${followersLink}">followers page</a>, <a target="_blank" href="https://poshmark.com/${followingLink}">following page</a>, or a people search page first such as this <a target="_bank" href="https://poshmark.com/search?query=a&type=people">one</a>.</span>
           `);
         }
 
@@ -120,8 +122,9 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
       btn.addEventListener('click', e => {
         // Check if on relevant URL
         if (btn.id === 'start-my-sharer' && !/\/closet\//.test(tabUrl)) {
+          const link = (username) ? `closet/${username}` : 'login';
           return addLog(`
-            <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/closet/${username}">closet</a> page first.</span>
+            <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/${link}">closet</a> page first.</span>
         `);
         } else if (btn.id === 'start-other-sharer' && !/\/category\//.test(tabUrl)) {
           return addLog(`
