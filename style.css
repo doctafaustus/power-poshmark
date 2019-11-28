@@ -6,7 +6,7 @@ body {
 }
 #top-bar {
   background: #f84e75;
-  padding: 14px;
+  padding: 10px;
   text-align: center;
 }
 
@@ -26,18 +26,18 @@ body {
 }
 
 hr {
-  border-top: 2px dotted #f84e75;
+  border-top: 1px solid #f84e75;
   background-color: #fff;
   height: 1px;
 }
 
 
 section.function {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .function-heading {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   text-align: center;
   padding-top: 10px;
 }
@@ -59,8 +59,13 @@ label {
 .function-groups {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* justify-items: center;
-  align-items: center; */
+}
+
+.function.auto-sharer .function-groups {
+  grid-template-columns: 1fr
+}
+.function.auto-sharer .tool-tip-group {
+  margin-bottom: 8px;
 }
 
 .tool-tip-icon {
@@ -138,6 +143,24 @@ button[disabled] {
 
 .start {
   margin-right: 10px;
+}
+
+.options {
+  margin-bottom: 8px;
+}
+
+.options.disabled label{
+  color: #c5c5c5;
+}
+
+label.option-text {
+  font-size: 14px;
+  margin-bottom: 20px;
+  font-weight: normal;
+  letter-spacing: normal;
+}
+label.option-text:first-child {
+  margin-right: 8px;
 }
 
 section.function.bundle-creator {

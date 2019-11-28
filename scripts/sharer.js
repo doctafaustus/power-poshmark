@@ -5,14 +5,17 @@ function ppStopSharer() {
   window.ppMessage(endMessage);
 }
 
-function ppResumeSharing() {
+function ppResumeSharing(options) {
   window.ppHaltPosting = false;
   document.body.classList.add('pp-processing');
-  window.postToPoshmark();
+  window.postToPoshmark(options);
 }
 
-function ppStartSharer() {
+function ppStartSharer(options) {
+  console.log('options', options);
+
   document.body.classList.add('pp-processing');
+
   // Save all product IDs and titles
   let productsToShare = [...document.querySelectorAll('.tile')].map(node => {
     return { id: node.id, name: node.querySelector('.title').textContent }
@@ -23,7 +26,19 @@ function ppStartSharer() {
   let numProductsShared = 0;
   
 
-  window.postToPoshmark = () => {
+  window.postToPoshmark = (options) => {
+    let partyID = null;
+
+    if (options.shareToParty) {
+      const eventEl = document.querySelector('#share-popup a[eventid]');
+
+      if (!eventEl) {
+        return window.ppMessage('<div class="msg error"><span class="log-body">No party found.</span></div>');
+      }
+
+      partyID = eventEl.getAttribute('eventid');
+    }
+
     // If there are no more products then autoscroll down to trigger lazy load
     if (!productsToShare.length) {
       console.log('AutoScrolling');
@@ -39,32 +54,16 @@ function ppStartSharer() {
   
     // Use and remove the first product in the array
     const productToSend = productsToShare.shift();
+
+    let additionalQuery = options.shareToParty ? `&event_id=${partyID}` : '';
+
     $.ajax({
-      type: 'PUT',
-      url: `https://poshmark.com/vm-rest/users/self/shared_posts/${productToSend.id}`,
+      type: 'POST',
+      url: `https://poshmark.com/listing/share?post_id=${productToSend.id}${additionalQuery}`,
       success(response) {
         
         numProductsShared++;
         console.log(response, productsToShare.length, productToSend.name);
-
-        if (response.error) {
-          window.ppHaltPosting = true;
-          console.log('ERROR', response.error.errorType);
-
-          if (response.error.errorType === 'SharePostRequestLimitExceededError') {
-            const rateLimitMessage = `<div class="msg error"><span class="log-body">Rate limit exceed - Restarting in 30 seconds...</span></div>`;
-            window.ppMessage(rateLimitMessage);
-            setTimeout(() => {
-              window.ppHaltPosting = false;
-              window.postToPoshmark();
-            }, 30000);
-          } else if (response.error.errorType === 'SuspectedBotError') {
-            document.body.classList.remove('pp-processing');
-            triggerCaptcha();
-            const botErrorMessage = `<div class="msg error"><span class="log-body">Sharing stopped by site - Captcha required.</span></div>`;
-            return window.ppMessage(botErrorMessage);
-          }
-        }
 
         if (window.ppHaltPosting) {
           const endMessage = `<div class="msg"><span class="log-body">Sharing paused.</span></div>`;
@@ -76,7 +75,28 @@ function ppStartSharer() {
         window.ppMessage(logMessage);
 
         // Stagger requests to prevent rate limit error
-        setTimeout(window.postToPoshmark, 250);
+        setTimeout(window.postToPoshmark.bind(null, options), 250);
+      },
+      error(xhr, status, error) {
+        console.log('xhr', xhr);
+        console.log('status', status);
+        console.log('error', error);
+
+        window.ppHaltPosting = true;
+
+        if (xhr.status === 429) {
+          const rateLimitMessage = `<div class="msg error"><span class="log-body">Rate limit exceed - Restarting in 30 seconds...</span></div>`;
+          window.ppMessage(rateLimitMessage);
+          setTimeout(() => {
+            window.ppHaltPosting = false;
+            window.postToPoshmark(options);
+          }, 30000);
+        } else if (xhr.status === 403) {
+          document.body.classList.remove('pp-processing');
+          triggerCaptcha();
+          const botErrorMessage = `<div class="msg error"><span class="log-body">Sharing stopped by site - Captcha required.</span></div>`;
+          return window.ppMessage(botErrorMessage);
+        }
       }
     });
   }
@@ -106,7 +126,7 @@ function ppStartSharer() {
     });
   
     productsToShare = productsToShare.concat(lazyLoadedProducts);
-    window.postToPoshmark();
+    window.postToPoshmark(options);
   }
   
   // Call out captcha to user
@@ -119,6 +139,6 @@ function ppStartSharer() {
 
   // Begin sequence
   listenForCategoryContent(getLazyLoadIDs);
-  window.postToPoshmark();
+  window.postToPoshmark(options);
   
 }

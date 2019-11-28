@@ -13,10 +13,6 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
   initAutoFollower();
   initBundler();
 
-  // Check for rs_id first, show login link if there's no id
-  chrome.storage.sync.get('something', storage =>  {
-  });
-
 
   // Receive custom messages from the content scripts
   chrome.runtime.onMessage.addListener(message => {
@@ -114,44 +110,51 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
 
   function initAutoSharer() {
     // Define sharing buttons
-    const startSharingBtns = document.querySelectorAll('#start-my-sharer, #start-other-sharer');
-    const stopSharingBtns = document.querySelectorAll('#stop-my-sharer, #stop-other-sharer');
+    const startSharingBtn = document.querySelector('#start-my-sharer');
+    const stopSharingBtn = document.querySelector('#stop-my-sharer');
+    const reverseSharingEl = document.querySelector('#reverse-sharing');
+    const shareToPartyEl = document.querySelector('#share-to-party');
 
     // Add sharing button listeners
-    startSharingBtns.forEach(btn => {
-      btn.addEventListener('click', e => {
-        // Check if on relevant URL
-        if (btn.id === 'start-my-sharer' && !/\/closet\//.test(tabUrl)) {
-          const link = (username) ? `closet/${username}` : 'login';
-          return addLog(`
-            <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/${link}">closet</a> page first.</span>
-        `);
-        } else if (btn.id === 'start-other-sharer' && !/\/category\//.test(tabUrl)) {
-          return addLog(`
-            <span class="msg error">Not on right page. Go to a category first such as <a target="_blank" href="https://poshmark.com/category/Men-Accessories-Belts">Men's Belts</a>.</span>
-          `);
-        }
-    
-        e.target.disabled = true;
-        e.target.nextElementSibling.disabled = false;
-    
-        if (e.target.textContent === 'Resume') {
-          triggerAction('resume-sharing');
-        } else {
-          triggerAction('start-sharing');
-        }
-      });
+    startSharingBtn.addEventListener('click', e => {
+      // Check if on relevant URL
+      // if (!/\/closet\//.test(tabUrl)) {
+      //   const link = (username) ? `closet/${username}` : 'login';
+      //   return addLog(`
+      //     <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/${link}">closet</a> page first.</span>
+      // `);
+      // }
+
+      const reverseSharing = reverseSharingEl.checked;
+      const shareToParty = shareToPartyEl.checked;
+  
+      reverseSharingEl.disabled = true;
+      shareToPartyEl.disabled = true;
+      document.querySelector('.auto-sharer .options').classList.add('disabled');
+
+      e.target.disabled = true;
+      e.target.nextElementSibling.disabled = false;
+
+  
+      if (e.target.textContent === 'Resume') {
+        triggerAction('resume-sharing', { reverseSharing, shareToParty });
+      } else {
+        triggerAction('start-sharing', { reverseSharing, shareToParty });
+      }
     });
 
-    stopSharingBtns.forEach(btn => {
-      btn.addEventListener('click', e => {
-        console.log('stop sharing');
-        // Change Start button text to "Resume"
-        e.target.disabled = true;
-        e.target.previousElementSibling.disabled = false;
-        e.target.previousElementSibling.textContent = 'Resume';
-        triggerAction('stop-sharing');
-      });
+    stopSharingBtn.addEventListener('click', e => {
+      console.log('stop sharing');
+      // Change Start button text to "Resume"
+      e.target.disabled = true;
+      e.target.previousElementSibling.disabled = false;
+      e.target.previousElementSibling.textContent = 'Resume';
+
+      reverseSharingEl.disabled = false;false
+      shareToPartyEl.disabled = false;
+      document.querySelector('.auto-sharer .options').classList.remove('disabled');
+
+      triggerAction('stop-sharing');
     });
   }
 
