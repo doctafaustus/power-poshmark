@@ -15,3 +15,8 @@ document.addEventListener('pp-event', e => {
   ppActions[e.detail.action](e.detail.argument);
 });
 
+let ppDataDiv = document.querySelector('#pp-data');
+if (!ppDataDiv) {
+	document.body.insertAdjacentHTML('beforeend', '<div style="display: none;" id="pp-data"></div>');
+	ppDataDiv = document.querySelector('#pp-data');
+}

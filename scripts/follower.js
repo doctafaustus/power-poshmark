@@ -1,7 +1,8 @@
 function ppStopFollower(action) {
   window.ppHaltFollowing = true;
   document.body.classList.remove('pp-processing');
-  window.ppMessage(`<div class="msg callout"><span class="log-body">Pausing ${action}ing.</span></div>`)
+  window.ppMessage(`<div class="msg callout"><span class="log-body">Pausing ${action}ing.</span></div>`);
+  document.querySelector('#pp-data').dataset[ppFollowerAction] = 'stopped';
 }
 
 function ppResumeFollowing(action) {
@@ -9,11 +10,15 @@ function ppResumeFollowing(action) {
   window.ppHaltFollowing = false;
   document.body.classList.add('pp-processing');
   window.followUsers();
+  document.querySelector('#pp-data').dataset[ppFollowerAction] = 'started';
 }
 
 function ppStartFollower(action) {
   document.body.classList.add('pp-processing');
   window.ppFollowerAction = action;
+
+  const ppDataDiv = document.querySelector('#pp-data');
+  ppDataDiv.dataset[ppFollowerAction] = 'started';
 
   // Save flag to halt/resume following
   window.ppHaltFollowing = false;
@@ -100,7 +105,7 @@ function ppStartFollower(action) {
 
   function triggerCaptcha() {
     document.querySelector(`#${window.ppFollowerAction}-user`).click();
-    const botErrorMessage = `<div class="msg error"><span class="log-body">Sharing stopped by site - Captcha required.</span></div>`;
+    const botErrorMessage = '<div class="msg error"><span class="log-body">Following process stopped by site - Captcha required.</span></div>';
     window.ppMessage(botErrorMessage);
   }
 

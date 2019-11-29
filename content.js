@@ -108,11 +108,25 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
   // If the pop was closed, halt all processes
   if (request.action === 'popup-closed') {
-    console.log('stopping processes');
-    document.body.classList.remove('pp-processing');
-    document.dispatchEvent(new CustomEvent('pp-event', { detail: { action: 'stop-sharing' }}));
-    document.dispatchEvent(new CustomEvent('pp-event', { detail: { action: 'stop-following', argument: 'follow' }}));
-    document.dispatchEvent(new CustomEvent('pp-event', { detail: { action: 'stop-bundling', argument: 'follow' }}));
+    console.log('Popup closed');
+
+    // Send popup data to background script to save to storage
+    const dummyLogEl = document.querySelector('#pp-dummy-log');
+    const ppDataEl = document.querySelector('#pp-data');
+    const log = dummyLogEl ? dummyLogEl.innerHTML : '';
+
+    chrome.runtime.sendMessage({ 
+      category: 'saveData',
+      ppData: {
+        log,
+        reverseSharing: ppDataEl.dataset.reverseSharing,
+        shareToParty: ppDataEl.dataset.shareToParty,
+        sharingState: ppDataEl.dataset.sharingState,
+        followState: ppDataEl.dataset.follow,
+        unfollowState: ppDataEl.dataset.unfollow,
+        bundlerState: ppDataEl.dataset.bundler
+      }
+    });
 
     return sendResponse({ ok: true });
   }

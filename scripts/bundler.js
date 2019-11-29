@@ -1,18 +1,22 @@
 function ppStopBundler() {
   window.ppHaltBundler = true;
   document.body.classList.remove('pp-processing');
-  window.ppMessage(`<div class="msg callout"><span class="log-body">Bundle scanning stopped.</span></div>`)
+  window.ppMessage(`<div class="msg callout"><span class="log-body">Bundle scanning stopped.</span></div>`);
+  document.querySelector('#pp-data').dataset.bundler = 'stopped';
 }
 
 function ppResumeBundler() {
   window.ppHaltBundler = false;
   document.body.classList.add('pp-processing');
   window.bundleCreator();
+  document.querySelector('#pp-data').dataset.bundler = 'started';
 }
 
 function ppStartBundler() {
   console.log('ppStartBundler');
   document.body.classList.add('pp-processing');
+
+  document.querySelector('#pp-data').dataset.bundler = 'started';
 
   var count = 0;
   const tracker = {};
@@ -54,9 +58,9 @@ function ppStartBundler() {
       if (tracker[user].length > 1) {
         console.log(tracker[user].length);
         const itemsLiked = tracker[user].map(item => {
-          return `<span class="item"><a about="_blank" href="${item.url}">${item.name}</a></span>`
+          return `<span class="item"><a target="_blank" class="bundle-link" href="${item.url}">${item.name}</a></span>`
         });
-        const message = `<div class="msg callout"><span class="log-body"><a class="bundle-user" target="_blank" href="https://poshmark.com/closet/${user}">${user}</a> liked ${itemsLiked.join(', ')}</span></div>`;
+        const message = `<div class="msg callout"><span class="log-body"><a class="bundle-user bundle-link" target="_blank" href="https://poshmark.com/closet/${user}">${user}</a> liked ${itemsLiked.join(', ')}</span></div>`;
         window.ppMessage(message);
       }
     }

@@ -18,8 +18,10 @@
   },
 
   "permissions": [
+    "tabs",
     "activeTab",
-    "storage"
+    "storage",
+    "background"
   ],
 
   "background": {

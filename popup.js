@@ -3,6 +3,12 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
   const tab = tabs[0];
   const tabUrl = tab.url;
 
+  chrome.runtime.sendMessage({ 
+    category: 'track',
+    popupOpenedTab: tabs[0].id
+  });
+
+
   // Get username
   let username = null;
   triggerAction('get-username');
@@ -18,6 +24,18 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
   chrome.runtime.onMessage.addListener(message => {
     if (message.messageType === 'log') addLog(message.messageText);
   });
+
+  // Delegate on bundle links to force storage saving
+  document.querySelector('.log').addEventListener('click', e => {
+    e.preventDefault();
+    if (e.target.matches('.bundle-link')) { 
+      chrome.runtime.sendMessage({ action: 'popup-closed' });
+      window.location
+      console.log('Forcing data save');
+      chrome.tabs.create({ url: e.target.href, active: false });
+    }
+  });
+
 
   function triggerAction(action, argument) {
     // TODO: This initial call might need a response
@@ -115,6 +133,16 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
     const reverseSharingEl = document.querySelector('#reverse-sharing');
     const shareToPartyEl = document.querySelector('#share-to-party');
 
+    // Reset button states on checkbox click
+    [reverseSharingEl, shareToPartyEl].forEach(checkbox => {
+      checkbox.addEventListener('click', () => {
+        console.log('checkbox clicked');
+        stopSharingBtn.click();
+        startSharingBtn.textContent = 'Start';
+      });
+    });
+
+
     // Add sharing button listeners
     startSharingBtn.addEventListener('click', e => {
       // Check if on relevant URL
@@ -135,12 +163,13 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
       e.target.disabled = true;
       e.target.nextElementSibling.disabled = false;
 
-  
+
       if (e.target.textContent === 'Resume') {
         triggerAction('resume-sharing', { reverseSharing, shareToParty });
       } else {
         triggerAction('start-sharing', { reverseSharing, shareToParty });
       }
+      
     });
 
     stopSharingBtn.addEventListener('click', e => {
@@ -150,13 +179,74 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
       e.target.previousElementSibling.disabled = false;
       e.target.previousElementSibling.textContent = 'Resume';
 
-      reverseSharingEl.disabled = false;false
+      reverseSharingEl.disabled = false;
       shareToPartyEl.disabled = false;
       document.querySelector('.auto-sharer .options').classList.remove('disabled');
 
       triggerAction('stop-sharing');
     });
   }
+
+  // Get log data and options from storage
+  chrome.storage.local.get('ppData', storage => {
+    console.log('heres your storage', storage);
+
+    if (!storage.ppData) return;
+
+    if (storage.ppData.log) {
+      addLog(storage.ppData.log);
+    }
+
+    if (storage.ppData.reverseSharing === "true") {
+      document.querySelector('#reverse-sharing').checked = true;
+    }
+
+    if (storage.ppData.shareToParty === "true") {
+      document.querySelector('#share-to-party').checked = true;
+    }
+
+
+    const startSharingBtn = document.querySelector('#start-my-sharer');
+    const startFollowBtn = document.querySelector('#start-following');
+    const startUnfollowBtn = document.querySelector('#start-unfollowing');
+    const startBundling = document.querySelector('#start-bundle');
+
+    if (storage.ppData.sharingState === 'started') {
+      startSharingBtn.disabled = true;
+      startSharingBtn.nextElementSibling.disabled = false;
+      document.querySelector('#reverse-sharing').disabled = true;
+      document.querySelector('#share-to-party').disabled = true;
+      document.querySelector('.auto-sharer .options').classList.add('disabled');
+    } else if (storage.ppData.sharingState === 'stopped') {
+      startSharingBtn.textContent = 'Resume';
+      startSharingBtn.nextElementSibling.disabled = true;
+    }
+
+    if (storage.ppData.followState === 'started') {
+      startFollowBtn.disabled = true;
+      startFollowBtn.nextElementSibling.disabled = false;
+    } else if (storage.ppData.followState === 'stopped') {
+      startFollowBtn.textContent = 'Resume';
+      startFollowBtn.nextElementSibling.disabled = true;
+    }
+
+    if (storage.ppData.unfollowState === 'started') {
+      startUnfollowBtn.disabled = true;
+      startUnfollowBtn.nextElementSibling.disabled = false;
+    } else if (storage.ppData.unfollowState === 'stopped') {
+      startUnfollowBtn.textContent = 'Resume';
+      startUnfollowBtn.nextElementSibling.disabled = true;
+    }
+
+    if (storage.ppData.bundlerState === 'started') {
+      startBundling.disabled = true;
+      startBundling.nextElementSibling.disabled = false;
+    } else if (storage.ppData.bundlerState === 'stopped') {
+      startBundling.textContent = 'Resume';
+      startBundling.nextElementSibling.disabled = true;
+    }
+
+  });
 
 });
 
@@ -177,4 +267,11 @@ function initToggleLog() {
 function addLog(message) {
   const log = document.querySelector('.log');
   log.insertAdjacentHTML('afterbegin', message);
+
+  // Handle captcha
+  if (message === '<div class="msg error"><span class="log-body">Sharing stopped by site - Captcha required.</span></div>') {
+    document.querySelector('#stop-my-sharer').click();
+  } else if (message === '<div class="msg error"><span class="log-body">Following process stopped by site - Captcha required.</span></div>') {
+    document.querySelectorAll('.auto-follower button.stop').forEach(btn => btn.click());
+  }
 }
