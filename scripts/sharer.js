@@ -27,7 +27,6 @@ function ppStartSharer(options) {
   //const numListings = +document.querySelector('#closet-info .count').innerText;
   const numListings = 150;
   
-
   if (options.reverseSharing) {
     window.ppMessage('<div class="msg"><span class="log-body">Gathering items in closet - Please wait...</span></div>');
   }
