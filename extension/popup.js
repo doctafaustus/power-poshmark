@@ -42,6 +42,7 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
     chrome.tabs.sendMessage(tabs[0].id, { action, argument }, (response) => {
       console.info('Response', response);
       if (response && response.username) username = response.username;
+      console.log('username set!');
     });
   } 
 

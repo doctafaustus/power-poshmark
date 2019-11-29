@@ -1,0 +1,29 @@
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f84e75;
+  padding: 20px;
+  
+  .header-left {
+    .logo-text {
+      display: inline-block;
+      font-family: 'Merriweather', sans-serif;
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+      color: #fff;
+    }
+  }
+
+  .header-right {
+    .header-link {
+      color: #fff;
+      font-size: 20px;
+    }
+  }
+}

@@ -12,5 +12,9 @@ npm-debug.log
 /private
 /msc
 
+/extension/Poshmark Extension.zip
+/extension/Archive.zip
 Poshmark Extension.zip
 Archive.zip
+
+/site/node_modules
