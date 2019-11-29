@@ -27,8 +27,8 @@ chrome.tabs.query({active: true, currentWindow: true}, tabs => {
 
   // Delegate on bundle links to force storage saving
   document.querySelector('.log').addEventListener('click', e => {
-    e.preventDefault();
     if (e.target.matches('.bundle-link')) { 
+      e.preventDefault();
       chrome.runtime.sendMessage({ action: 'popup-closed' });
       window.location
       console.log('Forcing data save');
