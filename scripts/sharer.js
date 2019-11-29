@@ -26,6 +26,7 @@ function ppStartSharer(options) {
   // If sharing order is reversed then first force lazy load
   //const numListings = +document.querySelector('#closet-info .count').innerText;
   const numListings = 150;
+  
 
   if (options.reverseSharing) {
     window.ppMessage('<div class="msg"><span class="log-body">Gathering items in closet - Please wait...</span></div>');
