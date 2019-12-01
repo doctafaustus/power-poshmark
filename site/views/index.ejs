@@ -65,7 +65,8 @@
                 handlePaymentError(response.message);
               }
             } else {
-
+              console.log('Something went wrong');
+              handlePaymentError('Something went wrong. Please try again.');
             }
           }
           xhr.send(JSON.stringify({

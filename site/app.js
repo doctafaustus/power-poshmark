@@ -8,6 +8,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const admin = require('firebase-admin');
 const bodyParser = require('body-parser');
+const favicon = require('serve-favicon');
 
 // Global constans
 const GOOGLE_CLIENT_SECRET = process.env.PORT ? process.env.GOOGLE_CLIENT_SECRET : fs.readFileSync(`${__dirname}/private/google_client_secret.txt`).toString();
@@ -43,6 +44,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+app.use(favicon(`${__dirname}/public/favicon.ico`));
 app.use(passport.initialize());
 app.use(passport.session());
 passport.serializeUser((user, done) => {
@@ -74,7 +76,11 @@ passport.use(new GoogleStrategy({
       const userObj = {...profile._json, creationDate: new Date().toISOString()};
       const querySnapshot = await db.collection('paid-users').where('email', '==', profile._json.email).get();
 
-      if (querySnapshot.docs.length) return done(null, { err: 'has-account' });
+      // If user already exists, return the user object with a flag
+      if (querySnapshot.docs.length) {
+        userObj.err = 'has account';
+        return done(null, userObj);
+      }
 
       // Add user to DB
       await db.collection('paid-users').doc(userObj.email).set(userObj);
@@ -99,11 +105,9 @@ app.get('/auth/google/:actionToTake', (req, res, next) => {
 
 // Google callback
 app.get('/login/callback', passport.authenticate('google', { failureRedirect: '/login-f' }), (req, res) => {
-  console.log('/callback', req.user);
 
-  if (req.user.err) {
-    console.log('EROR!!!!', req.user.err);
-    return res.redirect(`/?error=${req.user.err}`);
+  if (req.user.err === 'has account') {
+    return res.redirect(`/?registered=true&err=has-account`);
   }
 
   res.redirect('/?registered=true');
@@ -123,14 +127,14 @@ app.post('/charge', async (req, res) => {
   console.log('/charge');
 
   // Check if user is logged in
-  // if (!req.session.passport) {
-  //   return res.json({
-  //     message: 'Please login first.'
-  //   });
-  // }
+  if (!req.session.passport) {
+    return res.json({
+      message: 'Please login first.'
+    });
+  }
   
   // Get logged in user
-  const querySnapshot = await db.collection('paid-users').where('email', '==', 'wcoloe@gmail.com').get();
+  const querySnapshot = await db.collection('paid-users').where('email', '==', req.session.passport.user.email).get();
   const docs = querySnapshot.docs;
   if (!docs.length) {
     return res.json({
