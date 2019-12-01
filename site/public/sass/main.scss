@@ -10,6 +10,7 @@ header {
   align-items: center;
   background: #f84e75;
   padding: 10px 20px;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,.25);
   
   .header-left {
     .logo {
@@ -147,6 +148,34 @@ footer {
     font-family: 'Source Sans Pro', sans-serif;
     text-align: left;
 
+    &.processing {
+      background: none;
+      border: none;
+      box-shadow: none;
+
+      .modal-logo {
+        .modal-logo-image {
+          width: 120px;
+          margin-bottom: 12px;
+          animation-name: swing;
+          animation-duration: 2.5s;
+          animation-iteration-count: infinite;
+          animation-timing-function: ease-in-out;
+          box-shadow: 0 0 2px 0px white inset, 0 0 2px 0px white;
+        }
+      }
+
+      .modal-processing {
+        display: block;
+      }
+
+      .modal-title,
+      .modal-message,
+      .modal-cta {
+        display: none;
+      }
+    }
+
     .modal-logo {
       text-align: center;
 
@@ -168,6 +197,19 @@ footer {
       font-size: 16px;
       margin-bottom: 30px;
       line-height: 22px;
+
+      .modal-link {
+        text-decoration: underline;
+        color: #f84e75;
+      }
+    }
+
+    .modal-processing {
+      display: none;
+      text-align: center;
+      color: #fff;
+      font-size: 24px;
+      letter-spacing: .5px;
     }
 
     .modal-cta {
@@ -199,4 +241,12 @@ footer {
     overflow: auto;
     background-color: rgba(0,0,0,.5);
   }
+}
+
+@keyframes swing {
+  0% {transform: rotate(0deg);}
+  25% {transform: rotate(-25deg);}
+  50% {transform: rotate(25deg);}
+  75% {transform: rotate(-25deg);}
+  100% {transform: rotate(0deg);}
 }

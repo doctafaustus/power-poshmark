@@ -139,12 +139,10 @@ app.post('/charge', async (req, res) => {
   }
   const user = docs[0].data();
 
-  console.log('user-----', user);
-
   // Check if user's subscription is active already
   if (/full/.test(user.subscription)) {
     return res.json({
-      message: 'You have an active subscription already.'
+      message: 'You already have an active subscription.'
     });
   }
 
@@ -155,30 +153,33 @@ app.post('/charge', async (req, res) => {
     email: req.body.stripeEmail
   }, 
   (err, customer) => {
-    if (err) console.log(err);
-    console.log('Stripe customer::::', customer);
+    if (err) {
+      console.log('Customer creation error', err);
+      return res.json({ 
+        message: 'Something went wrong. Please try again.'
+      });
+    }
 
     stripe.subscriptions.create(
       {
         customer: customer.id,
-        plan: (process.env.PORT) ? '' : 'plan_G2H0nkuuNFs2Vd'
+        plan: (process.env.PORT) ? '' : 'plan_GHVs8Te6sf4oFI'
       }, 
-      (err, subscription) => {
-        console.log('subscription created!~', subscription);
-        User.findOne({ _id: req.session.passport.user._id }, (err, user) => {
-          if (err) throw err;
-          user.subscription = 'Full (9/monthly)';
-          user.stripeSubId = subscription.id;
-          user.subActive = true;
-
-          user.save((err) => {
-            if (err) throw err;
-            console.log(`Subscription created for ${req.session.passport.user._id}`);
-            res.json({
-              message: 'new subscription'
-            });
+      async (err, subscription) => {
+        // Test CC #: 4242424242424242
+        if (err) {
+          console.log('Subscription creation error', err);
+          return res.json({ 
+            message: 'Something went wrong. Please try again or try with another credit card.'
           });
-        });
+        }
+        console.log('subscription created!!~~', subscription);
+
+        // Update user in DB
+        user.subscription = 'full';
+        user.stripeSubID = subscription.id;
+        await db.collection('paid-users').doc(user.email).set(user);
+        res.json({ message: 'ok' });
     });
   });
 

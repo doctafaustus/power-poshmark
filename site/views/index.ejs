@@ -20,92 +20,136 @@
         <div class="landing-desc">
           Automate sharing your closet, follow or unfollow users, and find opportunites to bundle items for others!
         </div>
-        <a href="/auth/google/register" class="landing-cta">Buy Full Version</a>
+        <a href="#" class="landing-cta">Buy Full Version</a>
       </div>
     
       <div class="landing-right">
         <img class="landing-screenshot" src="/images/landing-screenshot.jpg">
       </div>
     </section>
+
+    <input id="email-input" type="hidden" value="<%= email %>">
     <%- include('partials/footer'); %>
     <%- include('partials/modal'); %>
 
     <script src='https://checkout.stripe.com/checkout.js'></script>
     <script>
-    var publicKey = window.location.origin.includes('powerposhmark.com') ? '' : 'pk_test_xsxPLaaJMGQmIJE1NP0qFuaD00AvB8Ksjp';
+      // Define Stripe handler
+      var publicKey = window.location.origin.includes('powerposhmark.com') ? '' : 'pk_test_xsxPLaaJMGQmIJE1NP0qFuaD00AvB8Ksjp';
 
-    // Test CC #: 4242424242424242
-    var handler = StripeCheckout.configure({
-      key: publicKey,
-      image: 'http://localhost:3000/images/logo.png',
-      locale: 'auto',
-      token: function(token) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/charge', true);
-        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8',);
-        xhr.onreadystatechange = () => {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-            var response = JSON.parse(xhr.responseText);
+      // Test CC #: 4242424242424242
+      var handler = StripeCheckout.configure({
+        key: publicKey,
+        image: 'http://localhost:3000/images/logo.png',
+        locale: 'auto',
+        token: function(token) {
 
-            if (response.message === 'ok') {
-              console.log('YAY', xhr.responseText);
+          // Show loading modal
+          modal.classList.add('active');
+          modalInner.classList.add('processing');
+
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', '/charge', true);
+          xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+          xhr.onreadystatechange = () => {
+            modalInner.classList.remove('processing');
+
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              var response = JSON.parse(xhr.responseText);
+
+              if (response.message === 'ok') {
+                console.log('Success', xhr.responseText);
+                handlePaymentSuccess(response.message);
+              } else {
+                console.log('Error', response);
+                handlePaymentError(response.message);
+              }
             } else {
-              console.log('Error', response);
-              handlePaymentError(response.message);
+
             }
-          } else {
-
           }
+          xhr.send(JSON.stringify({
+            stripeToken: token.id,
+            stripeEmail: token.email
+          }));
         }
-        xhr.send(JSON.stringify({
-          stripeToken: token.id,
-          stripeEmail: token.email
-        }));
-			}
-    });
-    
-    if (window.location.search.indexOf('registered=true') > -1) {
-      handler.open({
-        name: 'Power Poshmark',
-        description: 'Chrome Extension - Full Version',
-        amount: 2000,
-        allowRememberMe: false,
-        email: '<%= email %>'
       });
-    }
 
-    // Modal functionality
-    var modal = document.querySelector('.modal');
-    var modalCTA = modal.querySelector('.modal-cta');
+      // Check if email was returned by EJS after signup
+      var emailInput = document.querySelector('#email-input');
+      var email = emailInput.value;
+      console.log('User email:', email);
 
-    // Delegate modal CTA events
-    modal.addEventListener('click', function(e) {
-      if (!e.target.matches('.modal-cta')) return;
-      if (e.target.getAttribute('href') === '#') {
-        e.preventDefault();
-        modal.classList.remove('active');
+      if (window.location.search.indexOf('registered=true') > -1 && email) {
+        openStripeModal();
       }
-    });
 
-    // Handle Stripe payment errors
-    function handlePaymentError(message) {
+      // Handle main CTA functionaly
+      // Direct to Google signup if there's no email set by EJS
+      // Otherwise show payment modal
+      var mainCTA = document.querySelector('.landing-cta');
+      mainCTA.addEventListener('click', e => {
+        console.log('test');
+        e.preventDefault();
+        if (window.location.search.indexOf('registered=true') > -1 && email) {
+          openStripeModal();
+        } else {
+          window.location.href = '/auth/google/register';
+        }
+      });
+
+      // Modal elements
       var modal = document.querySelector('.modal');
+      var modalInner = modal.querySelector('.modal-inner');
       var modalCTA = modal.querySelector('.modal-cta');
+      var modalTitle = modal.querySelector('.modal-title');
+      var modalMessage = modal.querySelector('.modal-message');
 
-      modal.querySelector('.modal-title').textContent = 'There was an error';
-      modal.querySelector('.modal-message').textContent = message;
+      // Delegate modal CTA events
+      modal.addEventListener('click', function(e) {
+        if (!e.target.matches('.modal-cta')) return;
+        if (e.target.getAttribute('href') === '#') {
+          e.preventDefault();
+          modal.classList.remove('active');
+        }
+      });
 
-      if (message === 'Please login first.') {
-        modalCTA.textContent = 'Login';
-        modalCTA.setAttribute('href', '/auth/google/login');
-      } else {
+      // Handle Stripe payment success
+      function handlePaymentSuccess(message) {
+        modalTitle.textContent = 'Payment Successful!';
+        modalMessage.innerHTML = 'You\'re all set. You can now use Power Poshmark\'s full version and can manage your subscription at your <a class="modal-link" href="/account">Account</a> page.';
+
         modalCTA.textContent = 'Close';
         modalCTA.setAttribute('href', '#');
+        
+        modal.classList.add('active');
       }
 
-      modal.classList.add('active');
-    }
+      // Handle Stripe payment errors
+      function handlePaymentError(message) {
+        modalTitle.textContent = 'There was an error';
+        modalMessage.textContent = message;
 
+        if (message === 'Please login first.') {
+          modalCTA.textContent = 'Login';
+          modalCTA.setAttribute('href', '/auth/google/login');
+        } else {
+          modalCTA.textContent = 'Close';
+          modalCTA.setAttribute('href', '#');
+        }
+
+        modal.classList.add('active');
+      }
+
+      function openStripeModal() {
+        handler.open({
+          name: 'Power Poshmark',
+          description: 'Chrome Extension - Full Version',
+          amount: 2000,
+          allowRememberMe: false,
+          email: '<%= email %>'
+        });
+      }
     </script>
   </body>
 </html>

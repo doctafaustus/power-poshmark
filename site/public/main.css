@@ -8,7 +8,8 @@ header {
   justify-content: space-between;
   align-items: center;
   background: #f84e75;
-  padding: 10px 20px; }
+  padding: 10px 20px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25); }
   header .header-left .logo {
     width: 40px; }
   header .header-left .logo-text {
@@ -109,6 +110,24 @@ footer {
     overflow-y: auto;
     font-family: 'Source Sans Pro', sans-serif;
     text-align: left; }
+    .modal .modal-inner.processing {
+      background: none;
+      border: none;
+      box-shadow: none; }
+      .modal .modal-inner.processing .modal-logo .modal-logo-image {
+        width: 120px;
+        margin-bottom: 12px;
+        animation-name: swing;
+        animation-duration: 2.5s;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+        box-shadow: 0 0 2px 0px white inset, 0 0 2px 0px white; }
+      .modal .modal-inner.processing .modal-processing {
+        display: block; }
+      .modal .modal-inner.processing .modal-title,
+      .modal .modal-inner.processing .modal-message,
+      .modal .modal-inner.processing .modal-cta {
+        display: none; }
     .modal .modal-inner .modal-logo {
       text-align: center; }
       .modal .modal-inner .modal-logo .modal-logo-image {
@@ -124,6 +143,15 @@ footer {
       font-size: 16px;
       margin-bottom: 30px;
       line-height: 22px; }
+      .modal .modal-inner .modal-message .modal-link {
+        text-decoration: underline;
+        color: #f84e75; }
+    .modal .modal-inner .modal-processing {
+      display: none;
+      text-align: center;
+      color: #fff;
+      font-size: 24px;
+      letter-spacing: .5px; }
     .modal .modal-inner .modal-cta {
       display: block;
       width: 100%;
@@ -147,3 +175,15 @@ footer {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5); }
+
+@keyframes swing {
+  0% {
+    transform: rotate(0deg); }
+  25% {
+    transform: rotate(-25deg); }
+  50% {
+    transform: rotate(25deg); }
+  75% {
+    transform: rotate(-25deg); }
+  100% {
+    transform: rotate(0deg); } }
