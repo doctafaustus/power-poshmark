@@ -6,11 +6,33 @@ body {
 }
 #top-bar {
   background: #f84e75;
-  padding: 10px;
+  padding: 10px 20px;
+  position: relative;
   text-align: center;
 }
 
-#top-bar-text {
+#top-bar.full {
+  text-align: left;
+}
+#top-bar.full .top-bar-subscription {
+  display: block;
+}
+
+.top-bar-subscription {
+  display: none;
+  position: absolute;
+  top: 7px;
+  right: 20px;
+  z-index: 1;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+}
+.version-text {
+  padding-bottom: 1px;
+}
+
+.top-bar-logo-text {
   font-family: 'Merriweather', serif;
   font-weight: bold;
   letter-spacing: 0.3px;

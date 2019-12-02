@@ -13,7 +13,9 @@
 
     <div class="account">
       <div class="account-inner">
-        <h1>Manage Account</h1>
+
+        <div class="extension-success">You are now signed into the extension and can use the full plan's features!</div>
+        <h1>My Account</h1>
 
         <% if (user && user.email) { %>
           <div class="account-information">
@@ -46,6 +48,9 @@
         <div class="account-message"></div>
         </div>
     </div>
+
+    <input id="email-input" type="hidden" value="<%= user && user.email %>">
+    <input id="sub-input" type="hidden" value="<%= user && user.sub %>">
 
     <%- include('partials/footer'); %>
     <%- include('partials/modal'); %>

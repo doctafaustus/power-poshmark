@@ -1,5 +1,29 @@
 console.log('Power Poshmark content script');
 
+if (window.location.hostname === 'localhost' || window.location.hostname.replace('www.', '') === 'powerposhmark.com') {
+  if (window.location.pathname === '/account') {
+    const emailInput = document.querySelector('#email-input');
+    const subInput = document.querySelector('#sub-input');
+
+    const email = emailInput && emailInput.value;
+    const sub = subInput && subInput.value;
+
+    if (email && sub) {
+      console.log('sending data');
+      chrome.runtime.sendMessage({
+        category: 'pp_id_info',
+        data: { email, sub }
+      }, () => {
+        const subscriptionDiv = document.querySelector('.subscription-value');
+        const subscriptionValue = subscriptionDiv && subscriptionDiv.textContent.trim();
+        if (subscriptionValue.length && subscriptionValue !== 'None') {
+          document.querySelector('.extension-success').style.display = 'block';
+        }
+      });
+    }
+  }
+}
+
 // The order of scripts matters - make sure all functions are defined first
 const scripts = ['./scripts/message.js', './scripts/sharer.js', './scripts/follower.js', './scripts/bundler.js', './scripts/init.js'];
 injectScripts();

@@ -1,3 +1,11 @@
+// Check storage for version type
+chrome.storage.sync.get('ppEmail', emailStorage => {
+  if (emailStorage.ppEmail) {
+    document.querySelector('#top-bar').classList.add('full');
+    document.querySelector('.email').textContent = emailStorage.ppEmail;
+  }
+});
+
 chrome.tabs.query({active: true, currentWindow: true}, tabs => {
   // Save tab info
   const tab = tabs[0];
