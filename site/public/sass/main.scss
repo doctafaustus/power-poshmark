@@ -40,7 +40,8 @@ header {
 
 
 
-.landing-container {
+.landing-container,
+.account {
   display: flex;
   flex-direction: row;
   height: calc(100vh - 112px);
@@ -72,30 +73,6 @@ header {
       line-height: 32px;
       margin-bottom: 36px;
     }
-
-    .landing-cta {
-      box-sizing: border-box;
-      display: inline-block;
-      background-color: #f84e75;
-      font-size: 16px;
-      font-weight: bold;
-      color: #fff;
-      box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
-      transition: all .15s ease;
-      letter-spacing: .9px;
-      padding: 18px 66px 18px 20px;
-      text-decoration: none;
-      text-transform: uppercase;
-      background-image: url(images/arrow-long.png);
-      background-repeat: no-repeat;
-      background-position: right 20px center;
-
-      &:hover {
-        background-color: #279dc5;
-        transform: translateY(-1px);
-        box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08)
-      }
-    }
   }
 
   .landing-right {
@@ -106,6 +83,82 @@ header {
       box-shadow: 34.3px 62.5px 125px -25px rgba(50,50,93,.5), 20.6px 37.5px 75px -37.5px rgba(0,0,0,.6);
       border-radius: 6px;
     }
+  }
+}
+
+
+.account {
+  justify-content: center;
+
+  .account-inner {
+    background-color: #fff;
+    width: 100%;
+    border-radius: 4px;
+    padding: 40px;
+    text-align: center;
+    max-width: 600px;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,.298039);
+
+    h1 {
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e1e4e8;
+    }
+
+    .account-information {
+      .account-information-row {
+        padding-bottom: 10px;
+
+        label {
+          font-weight: bold;
+          padding-right: 6px;
+        }
+
+        a {
+          color: #f84e75;
+          text-decoration: underline;
+          transition: all .15s ease;
+
+          &:hover {
+            color: #000;
+          }
+        }
+      }
+    }
+
+    .account-message {
+      display: none;
+      margin-top: 20px;
+      color: #f00;
+      background-color: rgba(255, 0, 0, 0.059);
+      padding: 10px;
+      border: solid 1px #f00;
+    }
+  }
+}
+
+.cta {
+  display: inline-block;
+  background-color: #f84e75;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+  transition: all .15s ease;
+  letter-spacing: .9px;
+  padding: 18px 66px 18px 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+  background-image: url(images/arrow-long.png);
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+
+  &:hover {
+    background-color: #279dc5;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08)
   }
 }
 

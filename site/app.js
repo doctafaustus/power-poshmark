@@ -26,8 +26,6 @@ const stripeSK = process.env.PORT ? process.env.STRIPE_LIVE_SK : fs.readFileSync
 const stripe = require('stripe')(stripeSK);
 
 
-
-
 // Express
 const app = express();
 app.set('view engine', 'ejs');
@@ -40,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json({ limit: '1mb' }));
 app.use(session({
   secret: 'cj-the-cat',
-  cookie: { maxAge: 31556952000, secure: false },
+  cookie: { maxAge: 86400000, secure: false }, // Set to 24 hours
   resave: false,
   saveUninitialized: true
 }));
@@ -67,19 +65,19 @@ passport.use(new GoogleStrategy({
     passReqToCallback : true,
   },
   async (req, accessToken, refreshToken, profile, done) => {
-    console.log('done!');
     const actionToTake = req.query.state;
 
     if (actionToTake === 'register') {
 
       // First see if the user exists in the DB already
-      const userObj = {...profile._json, creationDate: new Date().toISOString()};
+      const userObj = { ...profile._json, creationDate: new Date().toISOString() };
       const querySnapshot = await db.collection('paid-users').where('email', '==', profile._json.email).get();
 
       // If user already exists, return the user object with a flag
       if (querySnapshot.docs.length) {
-        userObj.err = 'has account';
-        return done(null, userObj);
+        const existingUser = querySnapshot.docs[0].data();
+        existingUser.err = 'has account';
+        return done(null, existingUser);
       }
 
       // Add user to DB
@@ -88,6 +86,18 @@ passport.use(new GoogleStrategy({
 
     } else if (actionToTake === 'login') {
       console.log('login');
+
+      // Query DB for user
+      const querySnapshot = await db.collection('paid-users').where('email', '==', profile._json.email).get();
+
+      // If no user found, set error
+      if (!querySnapshot.docs.length) return done(null, { err: 'not found' });
+
+      // Return user with flag to send to account page
+      const user = querySnapshot.docs[0].data();
+      user.sendToAccount = true;
+
+      return done(null, user);
     }
   }
 ));
@@ -107,7 +117,16 @@ app.get('/auth/google/:actionToTake', (req, res, next) => {
 app.get('/login/callback', passport.authenticate('google', { failureRedirect: '/login-f' }), (req, res) => {
 
   if (req.user.err === 'has account') {
-    return res.redirect(`/?registered=true&err=has-account`);
+    return res.redirect('/?registered=true&err=has-account');
+  }
+
+  if (req.user.err === 'not found') {
+    return res.redirect('/account?not-found=true');
+  }
+
+  if (req.user.sendToAccount) {
+    console.log('sending to account page');
+    return res.redirect('/account');
   }
 
   res.redirect('/?registered=true');
@@ -116,9 +135,20 @@ app.get('/login/callback', passport.authenticate('google', { failureRedirect: '/
 
 // Routes
 app.get('/', (req, res) => {
-  console.log('PASSPORT', req.session.passport);
   const email = req.session.passport && req.session.passport.user && req.session.passport.user.email;
   res.render('index.ejs', { email });
+});
+
+app.get('/account', (req, res) => {
+  console.log('/account', req.session.passport);
+  const user = req.session.passport && req.session.passport.user;
+  res.render('account.ejs', { user });
+});
+
+app.get('/logout', (req, res) => {
+  console.log('/logout');
+  req.session.destroy();
+  res.redirect('/account');
 });
 
 
@@ -144,7 +174,7 @@ app.post('/charge', async (req, res) => {
   const user = docs[0].data();
 
   // Check if user's subscription is active already
-  if (/full/.test(user.subscription)) {
+  if (/^Full$/.test(user.subscription)) {
     return res.json({
       message: 'You already have an active subscription.'
     });
@@ -177,16 +207,74 @@ app.post('/charge', async (req, res) => {
             message: 'Something went wrong. Please try again or try with another credit card.'
           });
         }
-        console.log('subscription created!!~~', subscription);
+        console.log('Sbuscription created');
 
         // Update user in DB
-        user.subscription = 'full';
+        user.subscription = 'Full';
         user.stripeSubID = subscription.id;
         await db.collection('paid-users').doc(user.email).set(user);
+
+        // Save new data inside passport session object
+        req.session.passport.user = user;
+
         res.json({ message: 'ok' });
     });
   });
-
-
 });
 
+
+app.get('/cancel-subscription', async (req, res) => {
+  console.log('/cancel-subscription');
+
+  if (!req.session.passport || !req.session.passport.user) {
+    return res.redirect('/account?not-found=true');
+  }
+
+  // Query DB for user
+  const querySnapshot = await db.collection('paid-users').where('email', '==', req.session.passport.user.email).get();
+
+  // If no user found, set error
+  if (!querySnapshot.docs.length) return res.redirect('/account?not-found=true');
+  const user = querySnapshot.docs[0].data();
+
+  console.log('USER???', user);
+
+  const stripeSubID = user.stripeSubID;
+  if (!stripeSubID) return res.redirect('/account?no-sub-id=true');
+
+  // Cancel subscription
+  stripe.subscriptions.del(
+    user.stripeSubID,
+    async (err, confirmation) => {
+
+
+      if (err) {
+        console.log('Subcription deletion error', err);
+        return res.redirect('/account?something-went-wrong=true'); 
+      }
+
+      console.log('confirmation', confirmation);
+
+      const currentPeriodEnd = Number(`${confirmation.current_period_end}000`);
+      const endDate = new Date(currentPeriodEnd).toLocaleDateString().replace(/\/20(\d\d)$/, '/$1');
+
+      user.subEnds = currentPeriodEnd;
+      user.subscription = `(Subscription ended ${endDate})`;
+
+      // Update record in DB
+      await db.collection('paid-users').doc(user.email).set(user);
+
+      // Reset passport session user object
+
+
+      console.log('Subscription canceled');
+      console.log({currentPeriodEnd});
+      console.log({endDate});
+
+      req.session.passport.user = user;
+
+      return res.redirect('/account?success=true');
+    }
+  );
+
+});
