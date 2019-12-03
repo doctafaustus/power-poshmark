@@ -94,7 +94,7 @@ function ppStartSharer(options) {
         console.log(response, productsToShare.length, productToSend.name);
 
 
-        const logMessage = `<div class="msg"><span class="log-num">${numProductsShared}</span> <span class="log-body">Shared ${productToSend.name}</span></div>`;
+        const logMessage = `<div class="msg share"><span class="log-num">${numProductsShared}</span> <span class="log-body">Shared ${productToSend.name}</span></div>`;
         window.ppMessage(logMessage);
 
         if (window.ppHaltPosting) {

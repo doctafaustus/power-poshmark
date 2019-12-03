@@ -151,6 +151,33 @@ app.get('/logout', (req, res) => {
   res.redirect('/account');
 });
 
+app.post('/check', async (req, res) => {
+  console.log('/check', req.body.sub);
+  const querySnapshot = await db.collection('paid-users').where('sub', '==', req.body.sub).get();
+  const docs = querySnapshot.docs;
+  if (!docs.length) return res.sendStatus(404);
+  const user = docs[0].data();
+  if (hasPaidPlan(user)) {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(403);
+  }
+});
+
+function hasPaidPlan(user) {
+  let isPaidPlan = false;
+
+  if (/Full/.test(user.subscription)) {
+    isPaidPlan = true;
+  } else if (user.subscription) {
+    if (Date.now() < user.subEnds) {
+      isPaidPlan = true;
+    }
+  }
+
+  return isPaidPlan;
+}
+
 
 // Test CC #: 4242424242424242
 app.post('/charge', async (req, res) => {

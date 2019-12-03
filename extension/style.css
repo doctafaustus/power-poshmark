@@ -8,18 +8,11 @@ body {
   background: #f84e75;
   padding: 10px 20px;
   position: relative;
-  text-align: center;
-}
-
-#top-bar.full {
   text-align: left;
-}
-#top-bar.full .top-bar-subscription {
-  display: block;
 }
 
 .top-bar-subscription {
-  display: none;
+  display: block;
   position: absolute;
   top: 7px;
   right: 20px;
@@ -30,6 +23,12 @@ body {
 }
 .version-text {
   padding-bottom: 1px;
+}
+.email a {
+  color: #fff;
+}
+.email a:hover {
+  text-decoration: none;;
 }
 
 .top-bar-logo-text {

@@ -90,7 +90,6 @@
       // Otherwise show payment modal
       var mainCTA = document.querySelector('.landing-cta');
       mainCTA.addEventListener('click', e => {
-        console.log('test');
         e.preventDefault();
         if (window.location.search.indexOf('registered=true') > -1 && email) {
           openStripeModal();
@@ -120,8 +119,8 @@
         modalTitle.textContent = 'Payment Successful!';
         modalMessage.innerHTML = 'You\'re all set. You can now use Power Poshmark\'s full version and can manage your subscription at your <a class="modal-link" href="/account">Account</a> page.';
 
-        modalCTA.textContent = 'Close';
-        modalCTA.setAttribute('href', '#');
+        modalCTA.textContent = 'Okay';
+        modalCTA.setAttribute('href', '/account');
         
         modal.classList.add('active');
       }
