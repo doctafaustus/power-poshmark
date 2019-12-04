@@ -9,6 +9,7 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const admin = require('firebase-admin');
 const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
+var forceSsl = require('force-ssl-heroku');
 
 // Global constans
 const GOOGLE_CLIENT_SECRET = process.env.PORT ? process.env.GOOGLE_CLIENT_SECRET : fs.readFileSync(`${__dirname}/private/google_client_secret.txt`).toString();
@@ -28,6 +29,7 @@ const stripe = require('stripe')(stripeSK);
 
 // Express
 const app = express();
+app.use(forceSsl);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(sassMiddleware({
