@@ -36,11 +36,24 @@ function init() {
     }
   });
 
-  // Save trial values
-  let trialStorage;
+  // Reset daily trial values
   chrome.storage.sync.get('trialStorage', storage => {
-    trialStorage = storage.trialStorage
+    if (!storage.trialStorage) return;
+    const keys = Object.keys(storage.trialStorage);
+    const twentyFourHours = 86400000;
+
+    keys.forEach(key => {
+      if (storage.trialStorage[key].timestamp &&
+        new Date().getTime() - storage.trialStorage[key].timestamp >= twentyFourHours) {
+          console.log('CLEARING', storage.trialStorage[key]);
+          delete storage.trialStorage[key].limitReached;
+          delete storage.trialStorage[key].timestamp;
+      }
+    });
+
+    chrome.storage.sync.set({ trialStorage: storage.trialStorage });
   });
+
 
 
 
@@ -105,14 +118,17 @@ function init() {
           `);
         }
 
-        e.target.disabled = true;
-        e.target.nextElementSibling.disabled = false;
+        checkLimitReached('bundle', () => {
 
-        if (e.target.textContent === 'Resume') {
-          triggerAction('resume-bundling');
-        } else {
-          triggerAction('start-bundling');
-        }
+          e.target.disabled = true;
+          e.target.nextElementSibling.disabled = false;
+
+          if (e.target.textContent === 'Resume') {
+            triggerAction('resume-bundling');
+          } else {
+            triggerAction('start-bundling');
+          }
+        });
       });
 
       stopBtn.addEventListener('click',  e => {
@@ -142,21 +158,23 @@ function init() {
             `);
           }
 
-          // Disallow follow and unfollow processes at the same time
-          if (btn.id === 'start-unfollowing' && document.querySelector('#start-following').disabled) {
-            return addLog(`<span class="msg error">Please stop Follow Users process first.</span>`);
-          } else if (btn.id === 'start-following' && document.querySelector('#start-unfollowing').disabled) {
-            return addLog(`<span class="msg error">Please stop Unfollow Users process first.</span>`);
-          }
+          checkLimitReached(btn.dataset['action'], () => {
+            // Disallow follow and unfollow processes at the same time
+            if (btn.id === 'start-unfollowing' && document.querySelector('#start-following').disabled) {
+              return addLog(`<span class="msg error">Please stop Follow Users process first.</span>`);
+            } else if (btn.id === 'start-following' && document.querySelector('#start-unfollowing').disabled) {
+              return addLog(`<span class="msg error">Please stop Unfollow Users process first.</span>`);
+            }
 
-          e.target.disabled = true;
-          e.target.nextElementSibling.disabled = false;
+            e.target.disabled = true;
+            e.target.nextElementSibling.disabled = false;
 
-          if (e.target.textContent === 'Resume') {
-            triggerAction('resume-following', btn.dataset['action']);
-          } else {
-            triggerAction('start-following', btn.dataset['action']);
-          }
+            if (e.target.textContent === 'Resume') {
+              triggerAction('resume-following', btn.dataset['action']);
+            } else {
+              triggerAction('start-following', btn.dataset['action']);
+            }
+          });
         });
       });
 
@@ -193,30 +211,31 @@ function init() {
       // Add sharing button listeners
       startSharingBtn.addEventListener('click', e => {
         // Check if on closet page
-        if (!/\/closet\//.test(tabUrl)) {
-          const link = (username) ? `closet/${username}` : 'login';
-          return addLog(`
-            <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/${link}">closet</a> page first.</span>
-        `);
-        }
+        // if (!/\/closet\//.test(tabUrl)) {
+        //   const link = (username) ? `closet/${username}` : 'login';
+        //   return addLog(`
+        //     <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/${link}">closet</a> page first.</span>
+        // `);
+        // }
 
-        const reverseSharing = reverseSharingEl.checked;
-        const shareToParty = shareToPartyEl.checked;
-    
-        reverseSharingEl.disabled = true;
-        shareToPartyEl.disabled = true;
-        document.querySelector('.auto-sharer .options').classList.add('disabled');
-
-        e.target.disabled = true;
-        e.target.nextElementSibling.disabled = false;
-
-
-        if (e.target.textContent === 'Resume') {
-          triggerAction('resume-sharing', { reverseSharing, shareToParty });
-        } else {
-          triggerAction('start-sharing', { reverseSharing, shareToParty });
-        }
-        
+        checkLimitReached('share', () => {
+          const reverseSharing = reverseSharingEl.checked;
+          const shareToParty = shareToPartyEl.checked;
+      
+          reverseSharingEl.disabled = true;
+          shareToPartyEl.disabled = true;
+          document.querySelector('.auto-sharer .options').classList.add('disabled');
+  
+          e.target.disabled = true;
+          e.target.nextElementSibling.disabled = false;
+  
+  
+          if (e.target.textContent === 'Resume') {
+            triggerAction('resume-sharing', { reverseSharing, shareToParty });
+          } else {
+            triggerAction('start-sharing', { reverseSharing, shareToParty });
+          }
+        });
       });
 
       stopSharingBtn.addEventListener('click', e => {
@@ -327,6 +346,11 @@ function init() {
     //}
   }
 
+  let shareCount = 0;
+  let followCount = 0;
+  let unfollowCount = 0;
+  let bundleCount = 0;
+
   function checkTrialAllowance(message) {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = message;
@@ -334,13 +358,45 @@ function init() {
     const messageDiv = tempDiv.querySelector('.msg');
 
     if (messageDiv.classList.contains('share')) {
-      console.log('was share!');
+      shareCount++;
+      if (shareCount >= 30) setLimitReached('share');
     } else if (messageDiv.classList.contains('follow')) {
-
+      followCount++;
+      if (followCount >= 30) setLimitReached('follow');
     } else if (messageDiv.classList.contains('unfollow')) {
-
+      unfollowCount++;
+      if (unfollowCount >= 30) setLimitReached('unfollow');
     } else if (messageDiv.classList.contains('bundle')) {
-
+      bundleCount++;
+      if (bundleCount >= 1) setLimitReached('bundle');
     }
+  }
+
+  function setLimitReached(category) {
+    chrome.storage.sync.get( 'trialStorage', storage => {
+      storage.trialStorage = storage.trialStorage || {};
+
+      storage.trialStorage[category] = {
+        limitReached: true,
+        timestamp: new Date().getTime()
+      }
+      chrome.storage.sync.set({ trialStorage: storage.trialStorage });
+    });
+
+    document.querySelectorAll('.stop').forEach(stopBtn => stopBtn.click());
+    addLog('<span class="msg error">Trial limit reached for the day. Upgrade <a target="_blank" href="http://www.powerposhmark.com">here!</a></span>');
+  }
+
+  function checkLimitReached(category, cb) {
+    // if (isFullVersion) return cb();
+    
+    chrome.storage.sync.get('trialStorage', storage => {
+      if (storage.trialStorage && storage.trialStorage[category] && storage.trialStorage[category].limitReached) {
+        addLog('<span class="msg error">Trial limit reached for the day. Upgrade <a target="_blank" href="http://www.powerposhmark.com">here!</a></span>');
+      } else {
+        console.log('all good');
+        cb();
+      }
+    });
   }
 } 

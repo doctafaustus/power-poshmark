@@ -75,7 +75,7 @@ function ppStartFollower(action) {
         numFollowers++;
         //console.log(response, usersToFollow.length, userToFollow.handle);
 
-        const logMessage = `<div class="msg"><span class="log-num">${numFollowers}</span> <span class="log-body">${window.ppFollowerAction === 'follow' ? 'Followed' : 'Unfollowed'} ${userToFollow.handle}</span></div>`;
+        const logMessage = `<div class="msg ${window.ppFollowerAction}"><span class="log-num">${numFollowers}</span> <span class="log-body">${window.ppFollowerAction === 'follow' ? 'Followed' : 'Unfollowed'} ${userToFollow.handle}</span></div>`;
         window.ppMessage(logMessage);
 
         // Artificially show/hide follow/unfollow button

@@ -43,8 +43,8 @@ function ppStartBundler() {
     item.setAttribute('data-pp-marked', true);
 
     const targetNode = item.querySelector('.news-feed__message a[href*="/closet/"]');
-    if (!targetNode) return bundleCreator();;
-    const parentNode = targetNode.closest('.tc--g')
+    if (!targetNode) return bundleCreator();
+    const parentNode = targetNode.closest('.wb--ww')
     if (parentNode && /liked your listing/.test(parentNode.textContent)) {
       const user = targetNode.textContent;
       const item = targetNode.closest('a[data-et-element-type=list_item]');
@@ -60,7 +60,7 @@ function ppStartBundler() {
         const itemsLiked = tracker[user].map(item => {
           return `<span class="item"><a target="_blank" class="bundle-link" href="${item.url}">${item.name}</a></span>`
         });
-        const message = `<div class="msg callout"><span class="log-body"><a class="bundle-user bundle-link" target="_blank" href="https://poshmark.com/closet/${user}">${user}</a> liked ${itemsLiked.join(', ')}</span></div>`;
+        const message = `<div class="msg bundle callout"><span class="log-body"><a class="bundle-user bundle-link" target="_blank" href="https://poshmark.com/closet/${user}">${user}</a> liked ${itemsLiked.join(', ')}</span></div>`;
         window.ppMessage(message);
       }
     }
