@@ -123,8 +123,10 @@ if (window.location.hostname === 'localhost' || window.location.hostname.replace
   chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     if (request.action === 'get-username') {
-      const username = document.querySelector('header a[href*="/closet/"]')
-      .getAttribute('href').replace('/closet/', '');
+      const usernameEl = document.querySelector('header a[href*="/closet/"]')
+      if (!usernameEl) return sendResponse({ error: true });
+      
+      const username = usernameEl.getAttribute('href').replace('/closet/', '');
       return sendResponse({ username });
     }
 

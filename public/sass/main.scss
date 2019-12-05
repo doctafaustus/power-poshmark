@@ -68,10 +68,39 @@ header {
       }
     }
 
+    .price-container {
+      margin-bottom: 20px;
+
+      .price {
+        font-size: 36px;
+        margin-bottom: 10px;
+        color: #289cc4;
+        font-weight: bold;
+      }
+
+      .price-desc {
+        font-size: 16px;
+      }
+    }
+
     .landing-desc {
       font-size: 20px;
       line-height: 32px;
       margin-bottom: 36px;
+    }
+
+    .cta-terms {
+      margin-top: 10px;
+      font-size: 12px;
+
+      &,
+      a {
+        color: #a09a9a;
+      }
+
+      a {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -163,6 +192,11 @@ header {
   background-repeat: no-repeat;
   background-position: right 20px center;
 
+  &.landing-cta {
+    padding: 26px 66px 26px 20px;
+    font-size: 22px;
+  }
+
   &:hover {
     background-color: #279dc5;
     transform: translateY(-1px);
@@ -179,6 +213,55 @@ footer {
   display: flex;
   justify-content: space-between;
   padding: 16px;
+
+  .footer-right {
+    .divider {
+      padding: 0 6px;
+    }
+
+    a {
+      color: #fff;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.terms {
+  background-color: #fff;
+  padding: 40px;
+  max-width: 1440px;
+  margin: 0 auto;
+
+  h1, h2 {
+    color: #299CC4;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 26px;
+    margin-top: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  p {
+    line-height: 20px;
+  }
+
+  ul {
+    list-style-type: disc;
+    padding-left: 40px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
 }
 
 

@@ -54,7 +54,16 @@ function init() {
     chrome.storage.sync.set({ trialStorage: storage.trialStorage });
   });
 
-
+  // Get any potential status message from server
+  const xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      const res = JSON.parse(xhr.responseText);
+      if (res.status !== 'ok') addLog(res.status);
+    }
+  }
+  xhr.open('GET', 'http://localhost:3000/status', true);
+  xhr.send(null);
 
 
   chrome.tabs.query({active: true, currentWindow: true}, tabs => {
@@ -100,8 +109,12 @@ function init() {
       // TODO: This initial call might need a response
       chrome.tabs.sendMessage(tabs[0].id, { action, argument }, (response) => {
         console.info('Response', response);
-        if (response && response.username) username = response.username;
-        console.log('username set!');
+        if (response && response.username) {
+          username = response.username;
+          console.log('username set!');
+        } else if (response && response.error) {
+          addLog(`<span class="msg error">Please log into your account on poshmark.com first.</span>`);
+        }
       });
     } 
 
@@ -211,12 +224,12 @@ function init() {
       // Add sharing button listeners
       startSharingBtn.addEventListener('click', e => {
         // Check if on closet page
-        // if (!/\/closet\//.test(tabUrl)) {
-        //   const link = (username) ? `closet/${username}` : 'login';
-        //   return addLog(`
-        //     <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/${link}">closet</a> page first.</span>
-        // `);
-        // }
+        if (!/\/closet\//.test(tabUrl)) {
+          const link = (username) ? `closet/${username}` : 'login';
+          return addLog(`
+            <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/${link}">closet</a> page first.</span>
+        `);
+        }
 
         checkLimitReached('share', () => {
           const reverseSharing = reverseSharingEl.checked;

@@ -51,11 +51,35 @@ header {
       .account .landing-left h1 span {
         display: block;
         line-height: 62px; }
+    .landing-container .landing-left .price-container,
+    .account .landing-left .price-container {
+      margin-bottom: 20px; }
+      .landing-container .landing-left .price-container .price,
+      .account .landing-left .price-container .price {
+        font-size: 36px;
+        margin-bottom: 10px;
+        color: #289cc4;
+        font-weight: bold; }
+      .landing-container .landing-left .price-container .price-desc,
+      .account .landing-left .price-container .price-desc {
+        font-size: 16px; }
     .landing-container .landing-left .landing-desc,
     .account .landing-left .landing-desc {
       font-size: 20px;
       line-height: 32px;
       margin-bottom: 36px; }
+    .landing-container .landing-left .cta-terms,
+    .account .landing-left .cta-terms {
+      margin-top: 10px;
+      font-size: 12px; }
+      .landing-container .landing-left .cta-terms,
+      .landing-container .landing-left .cta-terms a,
+      .account .landing-left .cta-terms,
+      .account .landing-left .cta-terms a {
+        color: #a09a9a; }
+      .landing-container .landing-left .cta-terms a,
+      .account .landing-left .cta-terms a {
+        text-decoration: underline; }
   .landing-container .landing-right,
   .account .landing-right {
     width: 50%; }
@@ -121,6 +145,9 @@ header {
   background-image: url(images/arrow-long.png);
   background-repeat: no-repeat;
   background-position: right 20px center; }
+  .cta.landing-cta {
+    padding: 26px 66px 26px 20px;
+    font-size: 22px; }
   .cta:hover {
     background-color: #279dc5;
     transform: translateY(-1px);
@@ -134,6 +161,36 @@ footer {
   display: flex;
   justify-content: space-between;
   padding: 16px; }
+  footer .footer-right .divider {
+    padding: 0 6px; }
+  footer .footer-right a {
+    color: #fff; }
+    footer .footer-right a:hover {
+      text-decoration: underline; }
+
+.terms {
+  background-color: #fff;
+  padding: 40px;
+  max-width: 1440px;
+  margin: 0 auto; }
+  .terms h1, .terms h2 {
+    color: #299CC4; }
+  .terms h1 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px; }
+  .terms h2 {
+    font-size: 26px;
+    margin-top: 20px;
+    font-weight: bold;
+    margin-bottom: 10px; }
+  .terms p {
+    line-height: 20px; }
+  .terms ul {
+    list-style-type: disc;
+    padding-left: 40px;
+    margin-top: 15px;
+    margin-bottom: 15px; }
 
 .modal {
   display: none; }

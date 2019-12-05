@@ -145,10 +145,22 @@ app.get('/account', (req, res) => {
   res.render('account.ejs', { user });
 });
 
+app.get('/terms', (req, res) => {
+  console.log('/terms');
+  res.render('terms.ejs');
+});
+
 app.get('/logout', (req, res) => {
   console.log('/logout');
   req.session.destroy();
   res.redirect('/account');
+});
+
+// If a status message is needed then use this route to sent it on popup open
+app.get('/status', (req, res) => {
+  console.log('/status');
+  res.json({ status: 'ok' });
+  // res.json({ status: '<span class="msg callout">test</span>' });
 });
 
 app.post('/check', async (req, res) => {
