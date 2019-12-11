@@ -24,7 +24,8 @@ header {
     left: 10px; }
   header .header-right .header-link {
     color: #fff;
-    font-size: 20px; }
+    font-size: 20px;
+    margin-left: 20px; }
 
 .landing-container,
 .account {
