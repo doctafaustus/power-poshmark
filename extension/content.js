@@ -1,5 +1,7 @@
 if (window.location.hostname === 'localhost' || window.location.hostname.replace('www.', '') === 'powerposhmark.com') {
   if (window.location.pathname === '/account') {
+    console.log('pp account');
+
     const emailInput = document.querySelector('#email-input');
     const subInput = document.querySelector('#sub-input');
 

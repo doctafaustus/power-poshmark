@@ -1,5 +1,5 @@
 // Set dev or prod site
-const mode = 'dev';
+const mode = 'prod';
 const site = (mode === 'prod') ? 'http://www.powerposhmark.com' : 'http://localhost:3000';
 
 
@@ -62,7 +62,7 @@ function init() {
       if (res.status !== 'ok') addLog(res.status);
     }
   }
-  xhr.open('GET', 'http://localhost:3000/status', true);
+  xhr.open('GET', `${site}/status`, true);
   xhr.send(null);
 
 
@@ -224,12 +224,12 @@ function init() {
       // Add sharing button listeners
       startSharingBtn.addEventListener('click', e => {
         // Check if on closet page
-        if (!/\/closet\//.test(tabUrl)) {
-          const link = (username) ? `closet/${username}` : 'login';
-          return addLog(`
-            <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/${link}">closet</a> page first.</span>
-        `);
-        }
+        // if (!/\/closet\//.test(tabUrl)) {
+        //   const link = (username) ? `closet/${username}` : 'login';
+        //   return addLog(`
+        //     <span class="msg error">Not on right page. Go to your <a target="_blank" href="https://poshmark.com/${link}">closet</a> page first.</span>
+        // `);
+        // }
 
         checkLimitReached('share', () => {
           const reverseSharing = reverseSharingEl.checked;
