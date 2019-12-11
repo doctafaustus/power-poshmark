@@ -236,7 +236,7 @@ app.post('/charge', async (req, res) => {
     stripe.subscriptions.create(
       {
         customer: customer.id,
-        plan: (process.env.PORT) ? '' : 'plan_GHVs8Te6sf4oFI'
+        plan: (process.env.PORT) ? 'plan_GKzlDfm4NWla6L' : 'plan_GHVs8Te6sf4oFI'
       }, 
       async (err, subscription) => {
         // Test CC #: 4242424242424242

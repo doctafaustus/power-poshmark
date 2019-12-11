@@ -41,7 +41,7 @@
     <script src='https://checkout.stripe.com/checkout.js'></script>
     <script>
       // Define Stripe handler
-      var publicKey = window.location.origin.includes('powerposhmark.com') ? '' : 'pk_test_xsxPLaaJMGQmIJE1NP0qFuaD00AvB8Ksjp';
+      var publicKey = window.location.origin.includes('powerposhmark.com') ? 'pk_live_8K9EOAoBf42PZ11I2sBkxiFJ00vlU7Z79x' : 'pk_test_xsxPLaaJMGQmIJE1NP0qFuaD00AvB8Ksjp';
 
       // Test CC #: 4242424242424242
       var handler = StripeCheckout.configure({
