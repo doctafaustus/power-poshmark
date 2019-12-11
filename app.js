@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json({ limit: '1mb' }));
 app.use(session({
   secret: 'cj-the-cat',
-  cookie: { maxAge: 86400000, secure: false }, // Set to 24 hours
+  cookie: { maxAge: 86400000, secure: false, sameSite: 'None' }, // Set to 24 hours
   resave: false,
   saveUninitialized: true
 }));
