@@ -363,9 +363,9 @@ function init() {
       document.querySelectorAll('.auto-follower button.stop').forEach(btn => btn.click());
     }
 
-    //if (!isFullVersion) {
+    if (!isFullVersion) {
       checkTrialAllowance(message);
-    //}
+    }
   }
 
   let shareCount = 0;
@@ -410,13 +410,12 @@ function init() {
   }
 
   function checkLimitReached(category, cb) {
-    // if (isFullVersion) return cb();
+    if (isFullVersion) return cb();
     
     chrome.storage.sync.get('trialStorage', storage => {
       if (storage.trialStorage && storage.trialStorage[category] && storage.trialStorage[category].limitReached) {
         addLog('<span class="msg error">Trial limit reached for the day. Upgrade <a target="_blank" href="http://www.powerposhmark.com">here!</a></span>');
       } else {
-        console.log('all good');
         cb();
       }
     });

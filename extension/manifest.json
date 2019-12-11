@@ -3,7 +3,7 @@
 
   "name": "Power Poshmark",
   "description": "This extension automates an number of Poshmark actions for Poshmark sellers.",
-  "version": "0.0.0.3",
+  "version": "1.0.0.0",
 
   "icons": { 
     "16": "icon16.png",

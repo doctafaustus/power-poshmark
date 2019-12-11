@@ -24,9 +24,8 @@ function ppStartSharer(options) {
   ppDataDiv.dataset.sharingState = 'started';
   
   // If sharing order is reversed then first force lazy load
-  //const numListings = +document.querySelector('#closet-info .count').innerText;
-  const numListings = 150;
-  
+  const numListings = +document.querySelector('#closet-info .count').innerText;
+
   
   if (options.reverseSharing) {
     window.ppMessage('<div class="msg"><span class="log-body">Gathering items in closet - Please wait...</span></div>');
@@ -36,8 +35,6 @@ function ppStartSharer(options) {
   let productsToShare = [...document.querySelectorAll('.tile')].map(node => {
     return { id: node.id, name: node.querySelector('.title').textContent }
   });
-  
-  console.log(productsToShare.length);
 
   // Save flag to halt/resume posting
   window.ppHaltPosting = false;
@@ -45,7 +42,6 @@ function ppStartSharer(options) {
   let allItemsLoaded = false;
   
   window.postToPoshmark = (options) => {
-    console.log('window.postToPoshmark()');
 
     let partyID = null;
 
@@ -179,7 +175,6 @@ function ppStartSharer(options) {
 
 
   if (options.reverseSharing && !allItemsLoaded) {
-    console.log('reverse sharing');
 
     if (productsToShare.length >= numListings) return window.postToPoshmark(options);
 
@@ -191,7 +186,8 @@ function ppStartSharer(options) {
           return { id: node.id, name: node.querySelector('.title').textContent }
         });
 
-        console.log('found', productsToShare.length);
+        console.log('numListings:', numListings);
+        console.log('products found:', productsToShare.length);
 
         if (productsToShare.length < numListings) {
           checkAllProductsLoaded();

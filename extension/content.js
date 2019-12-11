@@ -172,7 +172,6 @@ if (window.location.hostname === 'localhost' || window.location.hostname.replace
 
   // Load core scripts in sequence
   function injectScripts() {
-    console.log('injectScripts')
     if (!scripts.length) return console.log('Done loading scripts');
     const s = document.createElement('script');
     s.src = chrome.runtime.getURL(scripts.shift());
