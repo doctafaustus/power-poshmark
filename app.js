@@ -134,6 +134,12 @@ app.get('/login/callback', passport.authenticate('google', { failureRedirect: '/
 
 
 // Routes
+// Cease and Desist letter 404
+app.use(function (err, req, res, next) {
+  res.status(404);
+})
+
+
 app.get('/', (req, res) => {
   const email = req.session.passport && req.session.passport.user && req.session.passport.user.email;
   res.render('index.ejs', { email });
