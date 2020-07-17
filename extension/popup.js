@@ -10,30 +10,35 @@ function init() {
 
   // Check storage for version type
   chrome.storage.sync.get('ppEmail', emailStorage => {
-    if (emailStorage.ppEmail) {
+    // Force full version
+    document.querySelector('.version-text').textContent = 'Full Version';
+    document.querySelector('.email').textContent = emailStorage.ppEmail;
+    isFullVersion = true;
 
-      // Check ppData
-      chrome.storage.sync.get('ppSub', storage => {
-        if (storage.ppSub) {
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', `${site}/check`, true);
-          xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-          xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-              console.log('User has Full version!');
-              document.querySelector('.version-text').textContent = 'Full Version';
-              document.querySelector('.email').textContent = emailStorage.ppEmail;
-              isFullVersion = true;
-            } else if (xhr.readyState === 4 && xhr.status !== 200) {
-              showTrialVersion();
-            }
-          };
-          xhr.send(JSON.stringify({ sub: storage.ppSub }));
-        }
-      });
-    } else {
-      showTrialVersion();
-    }
+    // if (emailStorage.ppEmail) {
+
+    //   // Check ppData
+    //   chrome.storage.sync.get('ppSub', storage => {
+    //     if (storage.ppSub) {
+    //       const xhr = new XMLHttpRequest();
+    //       xhr.open('POST', `${site}/check`, true);
+    //       xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+    //       xhr.onreadystatechange = () => {
+    //         if (xhr.readyState === 4 && xhr.status === 200) {
+    //           console.log('User has Full version!');
+    //           document.querySelector('.version-text').textContent = 'Full Version';
+    //           document.querySelector('.email').textContent = emailStorage.ppEmail;
+    //           isFullVersion = true;
+    //         } else if (xhr.readyState === 4 && xhr.status !== 200) {
+    //           showTrialVersion();
+    //         }
+    //       };
+    //       xhr.send(JSON.stringify({ sub: storage.ppSub }));
+    //     }
+    //   });
+    // } else {
+    //   showTrialVersion();
+    // }
 
     function showTrialVersion() {
       console.log('Not full version');
